@@ -7,17 +7,16 @@ use App\Http\Middleware\AuthAdmin;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Auth::routes();
+Auth::routes(['verify' => true]);
 
-// Homepage route
 Route::get('/', [HomeController::class, 'index'])->name('home.index');
 
-// User authenticated routes
-Route::middleware(['auth'])->group(function () {
+// USER (must be verified)
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/account-dashboard', [UserController::class, 'index'])->name('user.index');
 });
 
-// Admin authenticated routes
-Route::middleware(['auth', AuthAdmin::class])->group(function () {
+// ADMIN (must be verified + admin)
+Route::middleware(['auth', 'verified', AuthAdmin::class])->group(function () {
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
 });
